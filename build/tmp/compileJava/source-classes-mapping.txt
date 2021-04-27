@@ -1,2 +1,6 @@
-MainFX.java
- MainFX
+Main.java
+ Main
+GUI/Login/LoginController.java
+ GUI.Login.LoginController
+Database/LoginDB.java
+ Database.LoginDB
