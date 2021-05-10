@@ -1,0 +1,19 @@
+.login-button:hover {
+
+    -fx-opacity: 0.75;
+    -fx-cursor: hand;
+}
+
+#fancyText {
+    -fx-font: 16px sans-serif;
+}
+
+#confirmButton {
+    -fx-background-color: #369;
+    -fx-text-fill: white;
+}
+
+#confirmButton:hover {
+    -fx-opacity: 0.75;
+    -fx-cursor: hand;
+}
