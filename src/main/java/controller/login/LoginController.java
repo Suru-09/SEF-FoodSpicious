@@ -17,7 +17,7 @@ import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import repository.UserRepository;
+import repository.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,7 +41,7 @@ public class LoginController extends DatabaseCredentials implements Initializabl
     @FXML
     private Button loginButton;
 
-    private UserRepository userRepository = new UserRepository(super.url, super.username, super.password);
+    private final UserRepository userRepository = new UserRepository(super.url, super.username, super.password);
 
     private void reset() {
         password.clear();

@@ -30,9 +30,9 @@ public class UserRepository extends AbstractRepository<Long, User> {
      */
 
     public UserRepository(String url, String user, String password) {
-        this.url = url;
-        this.username = user;
-        this.password = password;
+        UserRepository.url = url;
+        username = user;
+        UserRepository.password = password;
     }
 
     /**
@@ -123,7 +123,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
                 + "phonenumber = " + createTemplate(userUpdated.getPhoneNumber())
                 + "isadmin = " +"'" + isAdmin + "'" + "where id = " + "'" + id_user + "';";
 
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (var connection = DriverManager.getConnection(url, username, password)
 
         ) {
             var ps = connection.prepareStatement(sql);
@@ -183,9 +183,9 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         int new_id = super.elems.size() + 1;
 
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (var connection = DriverManager.getConnection(url, username, password)
 
-             ) {
+        ) {
 
             sql = "insert into \"user\" "
                     + "VALUES(" + "'" + new_id + "'"  + ", "
@@ -277,7 +277,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
                     user.getUsername() + "'" + " AND "
                     + "password = " + "'" + user.getPassword() + "';";
 
-            try (var connection = DriverManager.getConnection(url, username, password);
+            try (var connection = DriverManager.getConnection(url, username, password)
             ) {
                 var ps = connection.prepareStatement(sql);
                 var rs = ps.executeUpdate();
@@ -313,7 +313,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         try (var connection = DriverManager.getConnection(url, username, password);
              var ps = connection.prepareStatement(sql);
-             var rs = ps.executeQuery();
+             var rs = ps.executeQuery()
         ) {
 
             while( rs.next() ) {
@@ -341,7 +341,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
         String sql = "update \"user\" SET id = id - 1" +
                 "where id > " + id;
 
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (var connection = DriverManager.getConnection(url, username, password)
         ) {
 
             var ps = connection.prepareStatement(sql);

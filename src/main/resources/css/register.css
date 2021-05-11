@@ -1,0 +1,39 @@
+.jfx-combo-box .cell {
+    -fx-text-font: 18px sans-serif;
+    -fx-text-fill: white;
+    -fx-background-color: #282828;
+}
+
+.jfx-combo-box .cell:hover {
+    -fx-opacity: 0.75;
+    -fx-cursor: hand;
+}
+
+.jfx-combo-box {
+    -fx-prompt-text-fill: white;
+}
+
+.button {
+    -fx-background-radius: 15px;
+}
+
+.button:hover {
+
+    -fx-opacity: 0.75;
+    -fx-cursor: hand;
+}
+
+#fancyText {
+    -fx-font: 16px sans-serif;
+}
+
+#confirmButton {
+    -fx-background-color: #369;
+    -fx-text-fill: white;
+}
+
+#confirmButton:hover {
+    -fx-opacity: 0.75;
+    -fx-cursor: hand;
+}
+

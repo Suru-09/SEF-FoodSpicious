@@ -19,8 +19,8 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
     private final String user;
     private final String password;
 
-    private ProductRepository productRepository;
-    private UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     /**
      * Database Credentials
@@ -117,7 +117,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
             throw new CustomException("Hey, you're adding an order which already exists");
         }
 
-        try (var connection = DriverManager.getConnection(url, user, password);
+        try (var connection = DriverManager.getConnection(url, user, password)
 
         ) {
             sql = "insert into \"order\" "
@@ -131,7 +131,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
            List<Product> productList = o.getProductList();
 
-            try (var connection2 = DriverManager.getConnection(url, user, password);
+            try (var connection2 = DriverManager.getConnection(url, user, password)
             ) {
                 String sql2 = "";
                 for(Product p: productList) {
@@ -166,8 +166,8 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
         try(var connection = DriverManager.getConnection(url, user, password);
             var ps = connection.prepareStatement(sql);
-            var rs = ps.executeQuery();
-            ) {
+            var rs = ps.executeQuery()
+        ) {
             while( rs.next() ) {
                 long customer_id = rs.getInt("customer");
                 System.out.println("CUSTOMER_ID: " + customer_id + " customer_id " + customerId);
@@ -199,7 +199,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
         long id_deleted = o.getId();
         String sql2 ="";
-        try(var connection2 = DriverManager.getConnection(url, user, password);
+        try(var connection2 = DriverManager.getConnection(url, user, password)
 
         ) {
             sql2 = "Delete from \"order_product\" where order_id = " + id_deleted;
@@ -210,7 +210,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
             e.printStackTrace();
         }
 
-        try(var connection = DriverManager.getConnection(url, user, password);
+        try(var connection = DriverManager.getConnection(url, user, password)
 
         ) {
             var ps = connection.prepareStatement(sql);
@@ -237,7 +237,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
                 + "status = " + "'" + o.getStatus().toString() + "'"
                 + "where id = " + "'" + id + "'" +  ";";
 
-        try (var connection = DriverManager.getConnection(url, user, password);
+        try (var connection = DriverManager.getConnection(url, user, password)
 
         ) {
             var ps = connection.prepareStatement(sql);
@@ -247,7 +247,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
             try (var connection2 = DriverManager.getConnection(url, user, password);
                  var ps2 = connection2.prepareStatement(sql2);
-                 var rs2 = ps2.executeQuery();
+                 var rs2 = ps2.executeQuery()
             ) {
                 List<Product> new_product_list = o.getProductList();
                 List<Product> what_to_add = new ArrayList<>();
@@ -277,7 +277,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
                                 "'" + p.getId() + "');";
 
 
-                        try(var connection3 = DriverManager.getConnection(url, user, password);
+                        try(var connection3 = DriverManager.getConnection(url, user, password)
                         ) {
                             var ps3 = connection3.prepareStatement(sql3);
                             var rs3 = ps3.executeUpdate();
