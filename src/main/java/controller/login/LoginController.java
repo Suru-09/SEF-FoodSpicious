@@ -5,6 +5,7 @@ import com.jfoenix.controls.*;
 import config.DatabaseCredentials;
 import controller.SceneManager;
 import controller.profile.AdminProfileController;
+import controller.profile.CustomerProfileController;
 import domain.Admin;
 import domain.Customer;
 import domain.User;
@@ -71,7 +72,29 @@ public class LoginController extends DatabaseCredentials implements Initializabl
             System.out.println("eu sunt: " + userLogged);
 
             if(userLogged instanceof Customer) {
+                String user_name = userLogged.getUsername();
+                //String user_password = userLogged.getPassword();
+                String user_firstName = userLogged.getFirstName();
+                String user_lastName = userLogged.getLastName();
+                String user_address = userLogged.getAddress();
+                String user_phone = userLogged.getPhoneNumber();
+                String hashSalt = userLogged.getHashSalt();
+                long id = userLogged.getId();
 
+                FXMLLoader loader = SceneManager.getInstance().getFXML(SceneManager.States.CUSTOMER_LOGGED);
+                CustomerProfileController controller = loader.getController();
+
+                controller.setHashSalt(hashSalt);
+                controller.setCustomer(userLogged);
+                controller.setUsernameText(user_name);
+                controller.setPasswordText("----------");
+                controller.setFirstNameText(user_firstName);
+                controller.setLastNameText(user_lastName);
+                controller.setAddressText(user_address);
+                controller.setPhoneText(user_phone);
+                controller.setUserId(id);
+
+                SceneManager.getInstance().switchScene(SceneManager.States.CUSTOMER_LOGGED);
             }
 
             if(userLogged instanceof Admin) {
@@ -96,9 +119,9 @@ public class LoginController extends DatabaseCredentials implements Initializabl
                 controller.setAddressText(user_address);
                 controller.setPhoneText(user_phone);
                 controller.setUserId(id);
-            }
 
-            SceneManager.getInstance().switchScene(SceneManager.States.ADMIN_LOGGED);
+                SceneManager.getInstance().switchScene(SceneManager.States.ADMIN_LOGGED);
+            }
         }
 
     }
