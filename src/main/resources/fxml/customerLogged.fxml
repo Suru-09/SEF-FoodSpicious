@@ -3,9 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
@@ -17,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane stylesheets="@../css/adminLogged.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.profile.AdminProfileController">
+<StackPane stylesheets="@../css/adminLogged.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.profile.CustomerProfileController">
    <children>
       <BorderPane fx:id="anchorPane" prefHeight="200.0" prefWidth="200.0">
          <left>
@@ -29,7 +27,7 @@
                      </image>
                   </ImageView>
                   <Separator prefHeight="125.0" prefWidth="262.0" />
-                  <JFXButton fx:id="processOrderButton" onAction="#processOrderButtonClicked" styleClass="optionLabel" text="Place Order" textFill="TEAL">
+                  <JFXButton fx:id="processOrderButton" styleClass="optionLabel" text="Place Order" textFill="TEAL">
                      <VBox.margin>
                         <Insets bottom="25.0" />
                      </VBox.margin>
@@ -75,31 +73,6 @@
                                        </font>
                                     </Label>
                                     <Separator prefHeight="12.0" prefWidth="614.0" />
-                                    <JFXTreeTableView fx:id="orderTable" prefHeight="356.0" prefWidth="614.0" />
-                                    <HBox prefHeight="106.0" prefWidth="614.0" spacing="10.0">
-                                       <children>
-                                          <Button fx:id="acceptOrderButton" mnemonicParsing="false" onAction="#acceptOrderButtonClicked" style="-fx-background-radius: 10px; -fx-background-color: #202020;" text="Accept Order" textFill="TEAL">
-                                             <font>
-                                                <Font name="System Bold" size="18.0" />
-                                             </font>
-                                          </Button>
-                                          <Button fx:id="rejectOrderButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#rejectOrderButtonClicked" style="-fx-background-color: #202020; -fx-background-radius: 10px;" text="Reject Order" textFill="TEAL">
-                                             <font>
-                                                <Font name="System Bold" size="18.0" />
-                                             </font>
-                                          </Button>
-                                          <JFXTextField fx:id="orderIdTextField" prefHeight="27.0" prefWidth="110.0" style="-fx-text-fill: teal;">
-                                             <font>
-                                                <Font name="Microsoft Sans Serif" size="18.0" />
-                                             </font>
-                                          </JFXTextField>
-                                          <Label prefHeight="40.0" prefWidth="151.0" text="Order ID" textFill="TEAL">
-                                             <font>
-                                                <Font size="15.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
                                  </children>
                               </VBox>
                            </children>
