@@ -1,28 +1,43 @@
+import controller.SceneManager;
+import domain.Admin;
+import domain.Order;
+import domain.Product;
+import domain.User;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
+import repository.OrderRepository;
+import repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Main extends Application {
+
+    private Stage stage;
+    private SceneManager sceneManager;
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("fxml/login.fxml"));
+        String url = "jdbc:postgresql://tai.db.elephantsql.com:5432/ktlzkben";
+        String username = "ktlzkben";
+        String password = "U85A51ME0gW4yVaPXdY--oJgSCm313Rn";
 
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.setTitle("FoodSpicious");
-        stage.show();
+
+        //TODO: delete all testing things after finishing with them
+
+        /* TESTING */
+        SceneManager.setUp(stage);
+        SceneManager.getInstance().switchScene(SceneManager.States.LOGIN);
 
     }
 
     public static void main(String[] args){
-
         launch(args);
-
     }
+
+
+
 
 }
