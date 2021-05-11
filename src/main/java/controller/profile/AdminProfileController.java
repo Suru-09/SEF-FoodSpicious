@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -53,7 +54,10 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
     private JFXTreeTableView<JFXOrder> orderTable;
 
     @FXML
-    private JFXTextField usernameText, firstNameText, lastNameText, addressText, phoneText;
+    private JFXTextField usernameText, firstNameText, lastNameText, addressText, phoneText, orderIdTextField;
+
+    @FXML
+    private Button acceptOrderButton, rejectOrderButton;
 
     @FXML
     private JFXPasswordField passwordText;
@@ -104,6 +108,45 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
 
         return null;
     }
+
+    public void acceptOrderButtonClicked(ActionEvent actionEvent) {
+
+        if(!orderIdTextField.getText().isEmpty()) {
+            Long id = Long.parseUnsignedLong(orderIdTextField.getText());
+            if(orderRepository.updateOrder(id, "ACCEPTED") ) {
+                loadJFXDialog("The Order has successfully been processed", "Success");
+            }
+            else {
+                loadJFXDialog("The Order hasn't been been processed", "Fail");
+            }
+        }
+        else {
+            loadJFXDialog("The Order hasn't been been processed", "Fail");
+        }
+
+        setObservableListForOrderTable();
+        orderTable.refresh();
+    }
+
+    public void rejectOrderButtonClicked(ActionEvent actionEvent) {
+
+        if(!orderIdTextField.getText().isEmpty()) {
+            Long id = Long.parseUnsignedLong(orderIdTextField.getText());
+            if(orderRepository.updateOrder(id, "REJECTED") ) {
+                loadJFXDialog("The Order has successfully been processed", "Success");
+            }
+            else {
+                loadJFXDialog("The Order hasn't been been processed", "Fail");
+            }
+        }
+        else {
+            loadJFXDialog("The Order hasn't been been processed", "Fail");
+        }
+
+        setObservableListForOrderTable();
+        orderTable.refresh();
+    }
+
 
     public void addButtonClicked(ActionEvent actionEvent) throws CustomException, SQLException {
         Product prod = getProductToModify();
@@ -187,8 +230,8 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
                     Double.toString(p.getPrice())
             );
             products.add(prod);
-            System.out.println("DATABASE: " + p);
-            System.out.println("PRODUCT: " + prod);
+//            System.out.println("DATABASE: " + p);
+//            System.out.println("PRODUCT: " + prod);
         }
 
         final TreeItem<JFXProduct> root = new RecursiveTreeItem<>(products, RecursiveTreeObject::getChildren);
@@ -200,10 +243,12 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
         ObservableList<JFXOrder> orders = FXCollections.observableArrayList();
         for(Order o: orderRepository.getAll()){
             JFXOrder ord = new JFXOrder(
+                    o.getId(),
                     o.getCustomer().getId(),
                     o.getStatus().toString()
             );
-            orders.add(ord);
+            if(o.getStatus() == Order.Status.PENDING)
+                orders.add(ord);
         }
 
         final TreeItem<JFXOrder> root = new RecursiveTreeItem<>(orders, RecursiveTreeObject::getChildren);
@@ -214,6 +259,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
     public void initializeProductTable() {
         JFXTreeTableColumn<JFXProduct, String> productName = new JFXTreeTableColumn<>("Name");
         productName.setPrefWidth(150);
+        productName.setResizable(false);
         productName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXProduct, String> param) {
@@ -223,6 +269,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
 
         JFXTreeTableColumn<JFXProduct, String> productIngredients = new JFXTreeTableColumn<>("Ingredients");
         productIngredients.setPrefWidth(150);
+        productIngredients.setResizable(false);
         productIngredients.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXProduct, String> param) {
@@ -232,6 +279,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
 
         JFXTreeTableColumn<JFXProduct, String> productExpirationDate = new JFXTreeTableColumn<>("Expiration Date");
         productExpirationDate.setPrefWidth(150);
+        productExpirationDate.setResizable(false);
         productExpirationDate.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXProduct, String> param) {
@@ -241,6 +289,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
 
         JFXTreeTableColumn<JFXProduct, String> productPrice = new JFXTreeTableColumn<>("Price");
         productPrice.setPrefWidth(140);
+        productPrice.setResizable(false);
 
         productPrice.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
             @Override
@@ -254,8 +303,19 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
     }
 
     public void initializeOrderTable() {
+        JFXTreeTableColumn<JFXOrder, String> orderID = new JFXTreeTableColumn<>("Order ID");
+        orderID.setPrefWidth(150);
+        orderID.setResizable(false);
+        orderID.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXOrder, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXOrder, String> param) {
+                return param.getValue().getValue().orderID;
+            }
+        });
+
         JFXTreeTableColumn<JFXOrder, String> orderStatus = new JFXTreeTableColumn<>("Order Status");
         orderStatus.setPrefWidth(150);
+        orderStatus.setResizable(false);
         orderStatus.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXOrder, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXOrder, String> param) {
@@ -265,6 +325,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
 
         JFXTreeTableColumn<JFXOrder, String> orderCustomerId = new JFXTreeTableColumn<>("Customer ID");
         orderCustomerId .setPrefWidth(140);
+        orderStatus.setResizable(false);
         orderCustomerId .setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXOrder, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXOrder, String> param) {
@@ -272,7 +333,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
             }
         });
 
-        orderTable.getColumns().setAll(orderCustomerId, orderStatus);
+        orderTable.getColumns().setAll(orderID, orderCustomerId, orderStatus);
     }
 
     public void setUsernameText(String usernameText) {
