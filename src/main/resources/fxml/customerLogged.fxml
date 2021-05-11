@@ -1,14 +1,273 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controller.profile.CustomerProfileController"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<StackPane stylesheets="@../css/adminLogged.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.profile.AdminProfileController">
+   <children>
+      <BorderPane fx:id="anchorPane" prefHeight="200.0" prefWidth="200.0">
+         <left>
+            <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="262.0" style="-fx-background-color: #383838;" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="137.0" fitWidth="138.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/admin.png" />
+                     </image>
+                  </ImageView>
+                  <Separator prefHeight="125.0" prefWidth="262.0" />
+                  <JFXButton fx:id="processOrderButton" onAction="#processOrderButtonClicked" styleClass="optionLabel" text="Place Order" textFill="TEAL">
+                     <VBox.margin>
+                        <Insets bottom="25.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="MS Reference Sans Serif" size="16.0" />
+                     </font>
+                  </JFXButton>
+                  <JFXButton fx:id="updateProfileButton" onAction="#updateProfileButtonClicked" styleClass="optionLabel" text="Update Profile" textFill="TEAL">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="25.0" />
+                     </VBox.margin>
+                  </JFXButton>
+                  <Separator prefHeight="71.0" prefWidth="262.0" />
+                  <JFXButton fx:id="backButton" onAction="#backButtonClicked" styleClass="optionLabel" text="Back" textFill="TEAL">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="25.0" />
+                     </VBox.margin>
+                  </JFXButton>
+               </children>
+            </VBox>
+         </left>
+         <center>
+            <VBox prefHeight="600.0" prefWidth="472.0" style="-fx-background-color: #202020;" BorderPane.alignment="TOP_RIGHT">
+               <children>
+                  <StackPane>
+                     <VBox.margin>
+                        <Insets top="50.0" />
+                     </VBox.margin>
+                     <children>
+                        <AnchorPane fx:id="orderPane" prefHeight="200.0" prefWidth="200.0" visible="false">
+                           <children>
+                              <VBox prefHeight="532.0" prefWidth="614.0" spacing="15.0">
+                                 <children>
+                                    <Label text="Place Order" textFill="TEAL">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefHeight="12.0" prefWidth="614.0" />
+                                    <JFXTreeTableView fx:id="orderTable" prefHeight="356.0" prefWidth="614.0" />
+                                    <HBox prefHeight="106.0" prefWidth="614.0" spacing="10.0">
+                                       <children>
+                                          <Button fx:id="acceptOrderButton" mnemonicParsing="false" onAction="#acceptOrderButtonClicked" style="-fx-background-radius: 10px; -fx-background-color: #202020;" text="Accept Order" textFill="TEAL">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                          </Button>
+                                          <Button fx:id="rejectOrderButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#rejectOrderButtonClicked" style="-fx-background-color: #202020; -fx-background-radius: 10px;" text="Reject Order" textFill="TEAL">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                          </Button>
+                                          <JFXTextField fx:id="orderIdTextField" prefHeight="27.0" prefWidth="110.0" style="-fx-text-fill: teal;">
+                                             <font>
+                                                <Font name="Microsoft Sans Serif" size="18.0" />
+                                             </font>
+                                          </JFXTextField>
+                                          <Label prefHeight="40.0" prefWidth="151.0" text="Order ID" textFill="TEAL">
+                                             <font>
+                                                <Font size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="profilePane">
+                           <children>
+                              <Label layoutX="75.0" prefHeight="43.0" prefWidth="260.0" styleClass="titleLabel" text="Profile Settings" textFill="TEAL">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                              </Label>
+                              <Separator layoutY="45.0" prefHeight="22.0" prefWidth="614.0" />
+                              <HBox layoutX="75.0" layoutY="67.0" prefHeight="40.0" prefWidth="538.0">
+                                 <children>
+                                    <Label alignment="BOTTOM_LEFT" prefHeight="17.0" prefWidth="83.0" text="Username" textFill="WHITE">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="15.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXTextField fx:id="usernameText" alignment="CENTER" styleClass="userTextField">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <Label fx:id="usernameError" prefHeight="37.0" prefWidth="121.0" text="Label" textFill="RED" visible="false">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox layoutX="75.0" layoutY="107.0" prefHeight="40.0" prefWidth="538.0">
+                                 <children>
+                                    <Label prefHeight="21.0" prefWidth="82.0" text="Password" textFill="WHITE">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXPasswordField fx:id="passwordText" alignment="CENTER" styleClass="userTextField">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXPasswordField>
+                                    <Label fx:id="passwordError" prefHeight="37.0" prefWidth="121.0" text="Label" textFill="RED" visible="false">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox layoutX="75.0" layoutY="172.0" prefHeight="47.0" prefWidth="538.0">
+                                 <children>
+                                    <Label prefHeight="21.0" prefWidth="84.0" text="First Name" textFill="WHITE">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXTextField fx:id="firstNameText" alignment="CENTER" styleClass="userTextField">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <Label fx:id="firstNameError" prefHeight="37.0" prefWidth="121.0" text="Label" textFill="RED" visible="false">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox layoutX="75.0" layoutY="219.0" prefHeight="39.0" prefWidth="538.0">
+                                 <children>
+                                    <Label prefHeight="21.0" prefWidth="86.0" text="Last Name" textFill="WHITE">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXTextField fx:id="lastNameText" alignment="CENTER" styleClass="userTextField">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <Label fx:id="lastNameError" prefHeight="37.0" prefWidth="121.0" text="Label" textFill="RED" visible="false">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <Label layoutY="308.0" styleClass="titleLabel" text="Contacts" textFill="TEAL">
+                                 <padding>
+                                    <Insets left="75.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="Microsoft Sans Serif" size="26.0" />
+                                 </font>
+                              </Label>
+                              <HBox layoutX="75.0" layoutY="364.0" prefHeight="35.0" prefWidth="486.0">
+                                 <children>
+                                    <Label text="Address" textFill="WHITE">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXTextField fx:id="addressText" alignment="CENTER" prefHeight="33.0" prefWidth="274.0" styleClass="userTextField">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <Label fx:id="addressError" prefHeight="37.0" prefWidth="121.0" text="Label" textFill="RED" visible="false">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox layoutX="75.0" layoutY="399.0" prefHeight="46.0" prefWidth="538.0">
+                                 <children>
+                                    <Label text="Phone Number" textFill="WHITE">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXTextField fx:id="phoneText" alignment="CENTER" styleClass="userTextField">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <Label fx:id="phoneError" prefHeight="37.0" prefWidth="121.0" text="Label" textFill="RED" visible="false">
+                                       <font>
+                                          <Font name="Microsoft Sans Serif" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <JFXButton fx:id="saveButton" alignment="TOP_CENTER" buttonType="RAISED" contentDisplay="TOP" layoutX="230.0" layoutY="460.0" onAction="#saveButtonClicked" prefHeight="2.0" prefWidth="56.0" ripplerFill="#1dc1ee" styleClass="save-button" text="Save" textAlignment="RIGHT" textFill="WHITE" visible="false">
+                                 <padding>
+                                    <Insets top="15.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="Microsoft Sans Serif" size="18.0" />
+                                 </font>
+                              </JFXButton>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </StackPane>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+      <StackPane fx:id="stackPane" mouseTransparent="true" prefHeight="600.0" prefWidth="800.0" />
+   </children>
+</StackPane>
