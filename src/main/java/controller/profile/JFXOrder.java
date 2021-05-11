@@ -6,10 +6,12 @@ import javafx.beans.property.StringProperty;
 
 public class JFXOrder extends RecursiveTreeObject<JFXOrder> {
 
+    StringProperty orderID;
     StringProperty customerId;
     StringProperty status;
 
-    public JFXOrder(Long customerId, String status) {
+    public JFXOrder(Long orderID, Long customerId, String status) {
+        this.orderID = new SimpleStringProperty(orderID.toString());
         this.customerId = new SimpleStringProperty(customerId.toString());
         this.status = new SimpleStringProperty(status);
     }

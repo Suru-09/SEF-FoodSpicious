@@ -1,5 +1,5 @@
-controller/profile/JFXOrder.java
- controller.profile.JFXOrder
+repository/UserRepository.java
+ repository.UserRepository
 domain/Product.java
  domain.Product
 domain/Order.java
@@ -9,15 +9,14 @@ domain/User.java
  domain.User
 repository/AbstractRepository.java
  repository.AbstractRepository
-controller/SceneManager.java
- controller.SceneManager
- controller.SceneManager$States
+repository/ProductRepository.java
+ repository.ProductRepository
 controller/profile/CustomerProfileController.java
  controller.profile.CustomerProfileController
 controller/profile/JFXProduct.java
  controller.profile.JFXProduct
-Main.java
- Main
+repository/OrderRepository.java
+ repository.OrderRepository
 config/DatabaseCredentials.java
  config.DatabaseCredentials
 domain/Customer.java
@@ -32,6 +31,10 @@ config/HashPassword.java
  config.HashPassword
 domain/BaseEntity.java
  domain.BaseEntity
+controller/profile/JFXOrder.java
+ controller.profile.JFXOrder
+Main.java
+ Main
 controller/login/LoginController.java
  controller.login.LoginController
 controller/profile/AdminProfileController.java
@@ -42,11 +45,9 @@ controller/profile/AdminProfileController.java
  controller.profile.AdminProfileController$4
  controller.profile.AdminProfileController$5
  controller.profile.AdminProfileController$6
-repository/ProductRepository.java
- repository.ProductRepository
-repository/UserRepository.java
- repository.UserRepository
+ controller.profile.AdminProfileController$7
+controller/SceneManager.java
+ controller.SceneManager
+ controller.SceneManager$States
 controller/register/RegisterController.java
  controller.register.RegisterController
-repository/OrderRepository.java
- repository.OrderRepository

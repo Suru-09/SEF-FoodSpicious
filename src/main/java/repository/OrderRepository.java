@@ -113,7 +113,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
         int new_id = super.elems.size() + 1;
 
         //TODO: do this exception in GUI
-        if(orderExists(o.getCustomer().getId(), o.getStatus()) ) {
+        if(orderExists(o.getId() ) ) {
             throw new CustomException("Hey, you're adding an order which already exists");
         }
 
@@ -160,7 +160,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
      * @param status The status of the order
      * @return true if the order exists, false otherwise
      */
-    public boolean orderExists(long customerId, Order.Status status) {
+    public boolean orderExists(Long orderID) {
 
         String sql = "Select * from \"order\" ";
 
@@ -169,11 +169,11 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
             var rs = ps.executeQuery()
         ) {
             while( rs.next() ) {
-                long customer_id = rs.getInt("customer");
-                System.out.println("CUSTOMER_ID: " + customer_id + " customer_id " + customerId);
-                System.out.println("STATUS: " + status);
+                long order_id = rs.getInt("id");
+//                System.out.println("CUSTOMER_ID: " + customer_id + " customer_id " + customerId);
+//                System.out.println("STATUS: " + status);
 
-                if(customer_id == customerId && status == Order.Status.PENDING)
+                if(order_id == orderID)
                     return true;
             }
             return false;
@@ -193,7 +193,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
                 + "AND customer=" + o.getCustomer().getId()
                 + "AND status=" + "'" + o.getStatus().toString() + "'" + ";";
 
-        if(!orderExists(o.getCustomer().getId(),o.getStatus()) ) {
+        if(!orderExists( o.getId()) ) {
             return false;
         }
 
@@ -224,18 +224,15 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
         return false;
     }
 
-    public boolean updateOrder(Order o) {
+    public boolean updateOrder(Long orderID, String status) {
 
-        long id = o.getId();
-
-        if(!orderExists(o.getCustomer().getId(), o.getStatus())) {
+        if(!orderExists(orderID) ){
             return false;
         }
 
         String sql ="update \"order\" SET "
-                + "customer = " + "'" + o.getCustomer().getId() + "', "
-                + "status = " + "'" + o.getStatus().toString() + "'"
-                + "where id = " + "'" + id + "'" +  ";";
+                + "status = " + "'" + status + "'"
+                + "where id = " + "'" + orderID + "'" +  ";";
 
         try (var connection = DriverManager.getConnection(url, user, password)
 
@@ -243,49 +240,46 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
 
-            String sql2 = "Select * from \"order_product\" where order_id = " + id;
+//            String sql2 = "Select * from \"order_product\" where order_id = " + id;
+//
+//            try (var connection2 = DriverManager.getConnection(url, user, password);
+//                 var ps2 = connection2.prepareStatement(sql2);
+//                 var rs2 = ps2.executeQuery()
+//            ) {
+//                List<Product> new_product_list = o.getProductList();
+//                List<Product> what_to_add = new ArrayList<>();
+//                List<Product> what_is_in_database = new ArrayList<>();
+//
+//                while(rs2.next()) {
+//                    long product_id = rs2.getInt("product_id");
+//                    Product p = getProduct(product_id);
+//                    System.out.println("PRODUCT: " + p);
+//
+//                    what_is_in_database.add(p);
+//                }
+//
+//                for(Product p: new_product_list) {
+//                    if(!what_is_in_database.contains(p))
+//                        what_to_add.add(p);
+//                }
+//
+//                System.out.println("new product list: " + new_product_list);
+//                System.out.println("what to add: " + what_to_add);
+//
+//                if(!what_to_add.isEmpty()) {
+//                    for(Product p: what_to_add) {
+//                        String sql3 = "insert into \"order_product\" " +
+//                                " VALUES( " +
+//                                "'" + id + "'" + "," +
+//                                "'" + p.getId() + "');";
 
-            try (var connection2 = DriverManager.getConnection(url, user, password);
-                 var ps2 = connection2.prepareStatement(sql2);
-                 var rs2 = ps2.executeQuery()
-            ) {
-                List<Product> new_product_list = o.getProductList();
-                List<Product> what_to_add = new ArrayList<>();
-                List<Product> what_is_in_database = new ArrayList<>();
 
-                while(rs2.next()) {
-                    long product_id = rs2.getInt("product_id");
-                    Product p = getProduct(product_id);
-                    System.out.println("PRODUCT: " + p);
-
-                    what_is_in_database.add(p);
-                }
-
-                for(Product p: new_product_list) {
-                    if(!what_is_in_database.contains(p))
-                        what_to_add.add(p);
-                }
-
-                System.out.println("new product list: " + new_product_list);
-                System.out.println("what to add: " + what_to_add);
-
-                if(!what_to_add.isEmpty()) {
-                    for(Product p: what_to_add) {
-                        String sql3 = "insert into \"order_product\" " +
-                                " VALUES( " +
-                                "'" + id + "'" + "," +
-                                "'" + p.getId() + "');";
-
-
-                        try(var connection3 = DriverManager.getConnection(url, user, password)
-                        ) {
-                            var ps3 = connection3.prepareStatement(sql3);
-                            var rs3 = ps3.executeUpdate();
-
-                        }
-                    }
-                }
-            }
+//                        try(var connection3 = DriverManager.getConnection(url, user, password)
+//                        ) {
+//                            var ps3 = connection3.prepareStatement(sql3);
+//                            var rs3 = ps3.executeUpdate();
+//
+//                        }
             return true;
         }
         catch(SQLException e) {

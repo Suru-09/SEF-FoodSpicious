@@ -53,3 +53,7 @@
 .jfx-tree-table-view > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled:selected {
     -fx-background-color: teal;
 }
+
+.button:hover {
+    -fx-cursor: hand;
+}
