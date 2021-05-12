@@ -1,23 +1,36 @@
-repository/UserRepository.java
- repository.UserRepository
+controller/profile/JFXOrder.java
+ controller.profile.JFXOrder
 domain/Product.java
  domain.Product
 domain/Order.java
  domain.Order
  domain.Order$Status
-domain/User.java
- domain.User
-repository/AbstractRepository.java
- repository.AbstractRepository
+controller/login/LoginController.java
+ controller.login.LoginController
+controller/profile/AdminProfileController.java
+ controller.profile.AdminProfileController
+ controller.profile.AdminProfileController$1
+ controller.profile.AdminProfileController$2
+ controller.profile.AdminProfileController$3
+ controller.profile.AdminProfileController$4
+ controller.profile.AdminProfileController$5
+ controller.profile.AdminProfileController$6
+ controller.profile.AdminProfileController$7
 repository/ProductRepository.java
  repository.ProductRepository
+controller/profile/CustomerProfileController.java
+ controller.profile.CustomerProfileController
+ controller.profile.CustomerProfileController$1
+ controller.profile.CustomerProfileController$2
+ controller.profile.CustomerProfileController$3
+ controller.profile.CustomerProfileController$4
+ controller.profile.CustomerProfileController$5
+ controller.profile.CustomerProfileController$5$1
+controller/profile/JFXProduct.java
+ controller.profile.JFXProduct
 controller/SceneManager.java
  controller.SceneManager
  controller.SceneManager$States
-controller/profile/JFXProduct.java
- controller.profile.JFXProduct
-repository/OrderRepository.java
- repository.OrderRepository
 config/DatabaseCredentials.java
  config.DatabaseCredentials
 domain/Customer.java
@@ -28,26 +41,19 @@ repository/Repository.java
  repository.Repository
 domain/Admin.java
  domain.Admin
-config/HashPassword.java
- config.HashPassword
-domain/BaseEntity.java
- domain.BaseEntity
-controller/profile/JFXOrder.java
- controller.profile.JFXOrder
 Main.java
  Main
+domain/BaseEntity.java
+ domain.BaseEntity
+config/HashPassword.java
+ config.HashPassword
+repository/AbstractRepository.java
+ repository.AbstractRepository
+repository/UserRepository.java
+ repository.UserRepository
 controller/register/RegisterController.java
  controller.register.RegisterController
-controller/profile/AdminProfileController.java
- controller.profile.AdminProfileController
- controller.profile.AdminProfileController$1
- controller.profile.AdminProfileController$2
- controller.profile.AdminProfileController$3
- controller.profile.AdminProfileController$4
- controller.profile.AdminProfileController$5
- controller.profile.AdminProfileController$6
- controller.profile.AdminProfileController$7
-controller/login/LoginController.java
- controller.login.LoginController
-controller/profile/CustomerProfileController.java
- controller.profile.CustomerProfileController
+domain/User.java
+ domain.User
+repository/OrderRepository.java
+ repository.OrderRepository

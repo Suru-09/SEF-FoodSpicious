@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -27,7 +28,7 @@
                      </image>
                   </ImageView>
                   <Separator prefHeight="125.0" prefWidth="262.0" />
-                  <JFXButton fx:id="processOrderButton" styleClass="optionLabel" text="Place Order" textFill="TEAL">
+                  <JFXButton fx:id="processOrderButton" onAction="#processOrderButtonClicked" styleClass="optionLabel" text="Place Order" textFill="TEAL">
                      <VBox.margin>
                         <Insets bottom="25.0" />
                      </VBox.margin>
@@ -73,6 +74,7 @@
                                        </font>
                                     </Label>
                                     <Separator prefHeight="12.0" prefWidth="614.0" />
+                                    <JFXTreeTableView fx:id="orderTable" />
                                  </children>
                               </VBox>
                            </children>

@@ -15,6 +15,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -55,7 +57,7 @@ public class LoginController extends DatabaseCredentials implements Initializabl
         stackPane.setVisible(false);
     }
 
-    public void loginButtonClicked(ActionEvent actionEvent) throws Exception {
+    public void loginButtonClicked() throws Exception {
 
         String user = username.getText();
         String pw = password.getText();
@@ -69,7 +71,7 @@ public class LoginController extends DatabaseCredentials implements Initializabl
         if (check){
             User userLogged = userRepository.getUser(user ,pw);
 
-            System.out.println("eu sunt: " + userLogged);
+            //System.out.println("eu sunt: " + userLogged);
 
             if(userLogged instanceof Customer) {
                 String user_name = userLogged.getUsername();
@@ -167,5 +169,11 @@ public class LoginController extends DatabaseCredentials implements Initializabl
         anchorPane.setEffect(blur);
     }
 
+    @FXML
+    private void enterPressed(KeyEvent keyEvent) throws Exception {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            loginButtonClicked();
+        }
+    }
 }
 

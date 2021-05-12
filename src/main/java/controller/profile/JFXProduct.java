@@ -1,5 +1,6 @@
 package controller.profile;
 
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -13,12 +14,14 @@ public class JFXProduct extends RecursiveTreeObject<JFXProduct> {
     StringProperty ingredients;
     StringProperty expirationDate;
     StringProperty price;
+    JFXCheckBox select;
 
     public JFXProduct(String name, String ingredients, String expirationDate, String price) {
         this.name = new SimpleStringProperty(name);
         this.ingredients = new SimpleStringProperty(ingredients);
         this.expirationDate = new SimpleStringProperty(expirationDate);
         this.price = new SimpleStringProperty(price);
+        this.select = new JFXCheckBox();
     }
 
     public String getName() {
@@ -43,6 +46,14 @@ public class JFXProduct extends RecursiveTreeObject<JFXProduct> {
 
     public StringProperty expirationDateProperty() {
         return expirationDate;
+    }
+
+    public JFXCheckBox getSelect() {
+        return select;
+    }
+
+    public void setSelect(JFXCheckBox select) {
+        this.select = select;
     }
 
     @Override
