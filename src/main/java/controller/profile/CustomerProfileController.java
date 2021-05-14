@@ -1,19 +1,26 @@
 package controller.profile;
 
 import com.jfoenix.controls.*;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import config.DatabaseCredentials;
 import controller.SceneManager;
 import domain.*;
+import domain.exception.CustomException;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 import repository.OrderRepository;
 import repository.ProductRepository;
 import repository.UserRepository;
@@ -31,14 +38,15 @@ public class CustomerProfileController extends DatabaseCredentials implements In
 
     @FXML
     private AnchorPane profilePane, orderPane;
+
     @FXML
-    private JFXButton backButton, saveButton, addButton, updateButton, deleteButton;
+    private JFXButton backButton, saveButton, addOrderButton;
+
+    @FXML
+    private JFXTreeTableView<JFXProduct> orderTable;
 
     @FXML
     private JFXTextField usernameText, firstNameText, lastNameText, addressText, phoneText, orderIdTextField;
-
-    @FXML
-    private Button acceptOrderButton, rejectOrderButton;
 
     @FXML
     private JFXPasswordField passwordText;
@@ -56,7 +64,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
     private final ProductRepository productRepository = new ProductRepository(super.url, super.username, super.password);
     List<Product> listOfProducts = productRepository.getAll();
 
-    private final OrderRepository orderRepository = new OrderRepository(super.url, super.username, super.password);
+    private final OrderRepository orderRepository = new OrderRepository(super.url, super.username, super.password, productRepository);
     List<Order> listOfOrders = orderRepository.getAll();
 
     public void setUsernameText(String usernameText) {
@@ -107,9 +115,156 @@ public class CustomerProfileController extends DatabaseCredentials implements In
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        initializeProductTable();
+        setObservableListForProductTable();
+
         disableTextFields();
         orderPane.setVisible(false);
         profilePane.setVisible(true);
+    }
+
+
+    public void addOrderButtonClicked(ActionEvent actionEvent) throws CustomException {
+
+        Order o = new Order((Customer)customerLogged, Order.Status.PENDING);
+        ObservableList<TreeItem<JFXProduct>> prod = orderTable.getSelectionModel().getSelectedItems();
+        for(TreeItem<JFXProduct> p : prod) {
+            JFXProduct chestie = p.getValue();
+            Product product = new Product(chestie.getName(),
+                    chestie.getIngredients(),
+                    Double.parseDouble(chestie.getPrice()),
+                    chestie.getExpirationDate());
+            o.addProduct(product);
+        }
+
+        System.out.println(o);
+
+        if(o.getProductList().isEmpty()) {
+            loadJFXDialog("Your order has no products!", "Error");
+        }
+        else {
+            if( orderRepository.addOrder(o) ) {
+                setObservableListForProductTable();
+
+                FXMLLoader loader = SceneManager.getInstance().getFXML(SceneManager.States.ADMIN_LOGGED);
+                AdminProfileController controller = loader.getController();
+                controller.setOrderRepository(orderRepository);
+                controller.setObservableListForOrderTable();
+                controller.getOrderTable().refresh();
+
+                loadJFXDialog("Your order has been confirmed!", "Success");
+            }
+            else {
+                loadJFXDialog("There was an error while adding the order!", "Error");
+            }
+        }
+    }
+
+    public void setObservableListForProductTable() {
+        ObservableList<JFXProduct> products = FXCollections.observableArrayList();
+        for(Product p: productRepository.getAll()) {
+            JFXProduct prod = new JFXProduct(
+                    p.getName(),
+                    p.getIngredients(),
+                    p.getExpirationDate(),
+                    Double.toString(p.getPrice())
+            );
+            products.add(prod);
+//            System.out.println("DATABASE: " + p);
+//            System.out.println("PRODUCT: " + prod);
+        }
+
+        final TreeItem<JFXProduct> root = new RecursiveTreeItem<>(products, RecursiveTreeObject::getChildren);
+        orderTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        orderTable.setRoot(root);
+        orderTable.setShowRoot(false);
+    }
+
+    public void initializeProductTable() {
+        JFXTreeTableColumn<JFXProduct, String> productName = new JFXTreeTableColumn<>("Name");
+        productName.setPrefWidth(125);
+        productName.setResizable(false);
+        productName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXProduct, String> param) {
+                return param.getValue().getValue().name;
+            }
+        });
+
+        JFXTreeTableColumn<JFXProduct, String> productIngredients = new JFXTreeTableColumn<>("Ingredients");
+        productIngredients.setPrefWidth(125);
+        productIngredients.setResizable(false);
+        productIngredients.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXProduct, String> param) {
+                return param.getValue().getValue().ingredients;
+            }
+        });
+
+        JFXTreeTableColumn<JFXProduct, String> productExpirationDate = new JFXTreeTableColumn<>("Expiration Date");
+        productExpirationDate.setPrefWidth(125);
+        productExpirationDate.setResizable(false);
+        productExpirationDate.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXProduct, String> param) {
+                return param.getValue().getValue().expirationDate;
+            }
+        });
+
+        JFXTreeTableColumn<JFXProduct, String> productPrice = new JFXTreeTableColumn<>("Price");
+        productPrice.setPrefWidth(125);
+        productPrice.setResizable(false);
+
+        productPrice.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<JFXProduct, String> param) {
+                return param.getValue().getValue().price;
+            }
+        });
+
+        JFXTreeTableColumn <JFXProduct, String> selected = new JFXTreeTableColumn<>("Select");
+        Callback<TreeTableColumn<JFXProduct, String>, TreeTableCell<JFXProduct, String>> selectCell =
+                new Callback<TreeTableColumn<JFXProduct, String>, TreeTableCell<JFXProduct, String>>() {
+                    @Override
+                    public TreeTableCell<JFXProduct, String> call(TreeTableColumn<JFXProduct, String> param) {
+                        TreeTableCell<JFXProduct, String> cell = new TreeTableCell<JFXProduct, String>() {
+
+                            //final JFXCheckBox checkBox = new JFXCheckBox();
+                             CheckBox checkBox = new CheckBox();
+
+                            @Override
+                            public void updateItem(String item, boolean empty)
+                            {
+
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setText(null);
+                                    setGraphic(null);
+                                }
+                                else {
+                                    checkBox.setText(item);
+                                    setGraphic(checkBox);
+                                }
+                            }
+
+                        };
+
+                        return cell;
+                    }
+                };
+
+        selected.setCellFactory(selectCell);
+        selected.setPrefWidth(110);
+        selected.setResizable(false);
+        selected.setEditable(true);
+
+        orderTable.getColumns().setAll(productName, productIngredients, productExpirationDate, productPrice, selected);
+
+    }
+
+    public void processOrderButtonClicked() {
+        profilePane.setVisible(false);
+        orderPane.setVisible(true);
     }
 
     public void backButtonClicked(ActionEvent actionEvent) {

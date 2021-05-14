@@ -15,7 +15,6 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-
 <StackPane stylesheets="@../css/login.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.login.LoginController">
    <children>
       <AnchorPane fx:id="anchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #303030;">
@@ -43,7 +42,7 @@
                               <Image url="@../images/key.png" />
                            </image>
                         </ImageView>
-                        <JFXPasswordField fx:id="password" style="-fx-text-fill: #ffffff;">
+                        <JFXPasswordField fx:id="password" onKeyPressed="#enterPressed" style="-fx-text-fill: #ffffff;">
                            <font>
                               <Font size="17.0" />
                            </font>
