@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,6 +15,8 @@ public class SceneManager {
     private Pane[] loadedPanes;
     private Scene[] scenes;
     private FXMLLoader[] loaders;
+
+//    private HashMap<String, Scene> elems = new HashMap<>();
 
     public enum States {
         LOGIN("fxml/login.fxml"),
@@ -29,11 +32,11 @@ public class SceneManager {
     }
 
     private SceneManager() {
-        try {
-            this.loadedPanes = new Pane[States.values().length];
-            this.scenes = new Scene[States.values().length];
-            this.loaders = new FXMLLoader[States.values().length];
+        this.loadedPanes = new Pane[States.values().length];
+        this.scenes = new Scene[States.values().length];
+        this.loaders = new FXMLLoader[States.values().length];
 
+        try {
             int i = 0 ;
             for(States state: States.values()) {
                 loaders[i] = new FXMLLoader(getClass().getClassLoader().getResource(state.url));
@@ -41,14 +44,15 @@ public class SceneManager {
                 scenes[i] = new Scene(loadedPanes[i]);
                 ++i;
             }
-
-
-            rootStage.setScene(scenes[0]);
-            rootStage.setResizable(false);
-            rootStage.show();
-        } catch(IOException e) {
+        }
+        catch(IOException e) {
             e.printStackTrace();
         }
+
+
+        rootStage.setScene(scenes[0]);
+        rootStage.setResizable(false);
+        rootStage.show();
     }
 
     public static SceneManager getInstance() {
@@ -63,6 +67,8 @@ public class SceneManager {
     }
 
     public void switchScene(States state) {
+
+        //putIfAbsent(state);
         rootStage.setScene(scenes[state.ordinal()]);
     }
 
@@ -71,6 +77,22 @@ public class SceneManager {
     }
 
     public FXMLLoader getFXML(States state) {
+
+        //putIfAbsent(state);
         return loaders[state.ordinal()];
     }
+
+//    private void putIfAbsent(States state) {
+//        elems.computeIfAbsent(state.url, e -> {
+//            int i = state.ordinal();
+//            loaders[i] = new FXMLLoader(getClass().getClassLoader().getResource(state.url));
+//            try {
+//                loadedPanes[i] = loaders[i].load();
+//            } catch (IOException ioException) {
+//                ioException.printStackTrace();
+//            }
+//            scenes[i] = new Scene(loadedPanes[i]);
+//            return scenes[i];
+//        });
+//    }
 }
