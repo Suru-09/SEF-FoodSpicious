@@ -74,7 +74,15 @@
                                        </font>
                                     </Label>
                                     <Separator prefHeight="12.0" prefWidth="614.0" />
-                                    <JFXTreeTableView fx:id="orderTable" />
+                                    <JFXTreeTableView fx:id="orderTable" editable="true" prefHeight="356.0" prefWidth="614.0" />
+                                    <JFXButton fx:id="addOrderButton" buttonType="RAISED" onAction="#addOrderButtonClicked" prefHeight="39.0" prefWidth="135.0" text="Add Order" textFill="TEAL">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets left="220.0" />
+                                       </VBox.margin>
+                                    </JFXButton>
                                  </children>
                               </VBox>
                            </children>

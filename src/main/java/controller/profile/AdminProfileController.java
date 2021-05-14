@@ -31,6 +31,7 @@ import repository.ProductRepository;
 import repository.UserRepository;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -81,9 +82,16 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
     private final ProductRepository productRepository = new ProductRepository(super.url, super.username, super.password);
     List<Product> listOfProducts = productRepository.getAll();
 
-    private final OrderRepository orderRepository = new OrderRepository(super.url, super.username, super.password);
+    private OrderRepository orderRepository = new OrderRepository(super.url, super.username, super.password, productRepository);
     List<Order> listOfOrders = orderRepository.getAll();
 
+    public void setOrderRepository(OrderRepository repo) {
+        orderRepository = repo;
+    }
+
+    public JFXTreeTableView<JFXOrder> getOrderTable() {
+        return orderTable;
+    }
 
     public AdminProfileController() {
     }
@@ -179,7 +187,6 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
         }
 
         boolean check = productRepository.updateProduct(prod);
-        listOfProducts = productRepository.getAll();
 
         if( !check ) {
             loadJFXDialog("There was an error updating the product", "Error");
@@ -201,7 +208,6 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
         }
 
         boolean check = productRepository.deleteProduct(prod);
-        listOfProducts = productRepository.getAll();
 
         if( !check ) {
             loadJFXDialog("There was an error deleting the product", "Error");
@@ -222,7 +228,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
 
     public void setObservableListForProductTable() {
         ObservableList<JFXProduct> products = FXCollections.observableArrayList();
-        for(Product p: productRepository.getAll()) {
+        for(Product p: new ArrayList<>(productRepository.getHashMap().values())) {
             JFXProduct prod = new JFXProduct(
                     p.getName(),
                     p.getIngredients(),
@@ -241,7 +247,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
 
     public void setObservableListForOrderTable() {
         ObservableList<JFXOrder> orders = FXCollections.observableArrayList();
-        for(Order o: orderRepository.getAll()){
+        for(Order o: new ArrayList<>(orderRepository.getHashMap().values())){
             JFXOrder ord = new JFXOrder(
                     o.getId(),
                     o.getCustomer().getId(),

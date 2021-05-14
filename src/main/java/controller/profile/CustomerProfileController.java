@@ -5,11 +5,14 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import config.DatabaseCredentials;
 import controller.SceneManager;
 import domain.*;
+import domain.exception.CustomException;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
@@ -37,7 +40,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
     private AnchorPane profilePane, orderPane;
 
     @FXML
-    private JFXButton backButton, saveButton;
+    private JFXButton backButton, saveButton, addOrderButton;
 
     @FXML
     private JFXTreeTableView<JFXProduct> orderTable;
@@ -61,7 +64,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
     private final ProductRepository productRepository = new ProductRepository(super.url, super.username, super.password);
     List<Product> listOfProducts = productRepository.getAll();
 
-    private final OrderRepository orderRepository = new OrderRepository(super.url, super.username, super.password);
+    private final OrderRepository orderRepository = new OrderRepository(super.url, super.username, super.password, productRepository);
     List<Order> listOfOrders = orderRepository.getAll();
 
     public void setUsernameText(String usernameText) {
@@ -120,6 +123,43 @@ public class CustomerProfileController extends DatabaseCredentials implements In
         profilePane.setVisible(true);
     }
 
+
+    public void addOrderButtonClicked(ActionEvent actionEvent) throws CustomException {
+
+        Order o = new Order((Customer)customerLogged, Order.Status.PENDING);
+        ObservableList<TreeItem<JFXProduct>> prod = orderTable.getSelectionModel().getSelectedItems();
+        for(TreeItem<JFXProduct> p : prod) {
+            JFXProduct chestie = p.getValue();
+            Product product = new Product(chestie.getName(),
+                    chestie.getIngredients(),
+                    Double.parseDouble(chestie.getPrice()),
+                    chestie.getExpirationDate());
+            o.addProduct(product);
+        }
+
+        System.out.println(o);
+
+        if(o.getProductList().isEmpty()) {
+            loadJFXDialog("Your order has no products!", "Error");
+        }
+        else {
+            if( orderRepository.addOrder(o) ) {
+                setObservableListForProductTable();
+
+                FXMLLoader loader = SceneManager.getInstance().getFXML(SceneManager.States.ADMIN_LOGGED);
+                AdminProfileController controller = loader.getController();
+                controller.setOrderRepository(orderRepository);
+                controller.setObservableListForOrderTable();
+                controller.getOrderTable().refresh();
+
+                loadJFXDialog("Your order has been confirmed!", "Success");
+            }
+            else {
+                loadJFXDialog("There was an error while adding the order!", "Error");
+            }
+        }
+    }
+
     public void setObservableListForProductTable() {
         ObservableList<JFXProduct> products = FXCollections.observableArrayList();
         for(Product p: productRepository.getAll()) {
@@ -135,6 +175,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
         }
 
         final TreeItem<JFXProduct> root = new RecursiveTreeItem<>(products, RecursiveTreeObject::getChildren);
+        orderTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         orderTable.setRoot(root);
         orderTable.setShowRoot(false);
     }
@@ -185,17 +226,19 @@ public class CustomerProfileController extends DatabaseCredentials implements In
         Callback<TreeTableColumn<JFXProduct, String>, TreeTableCell<JFXProduct, String>> selectCell =
                 new Callback<TreeTableColumn<JFXProduct, String>, TreeTableCell<JFXProduct, String>>() {
                     @Override
-                    public TreeTableCell call(final TreeTableColumn<JFXProduct, String> param) {
-                        final TreeTableCell<JFXProduct, String> cell = new TreeTableCell<JFXProduct, String>() {
+                    public TreeTableCell<JFXProduct, String> call(TreeTableColumn<JFXProduct, String> param) {
+                        TreeTableCell<JFXProduct, String> cell = new TreeTableCell<JFXProduct, String>() {
 
-                            final JFXCheckBox checkBox = new JFXCheckBox();
+                            //final JFXCheckBox checkBox = new JFXCheckBox();
+                             CheckBox checkBox = new CheckBox();
 
                             @Override
                             public void updateItem(String item, boolean empty)
                             {
+
                                 super.updateItem(item, empty);
                                 if (empty) {
-                                    //setText(null);
+                                    setText(null);
                                     setGraphic(null);
                                 }
                                 else {
@@ -203,14 +246,17 @@ public class CustomerProfileController extends DatabaseCredentials implements In
                                     setGraphic(checkBox);
                                 }
                             }
+
                         };
+
                         return cell;
                     }
                 };
 
         selected.setCellFactory(selectCell);
-        selected.setPrefWidth(60);
+        selected.setPrefWidth(110);
         selected.setResizable(false);
+        selected.setEditable(true);
 
         orderTable.getColumns().setAll(productName, productIngredients, productExpirationDate, productPrice, selected);
 
