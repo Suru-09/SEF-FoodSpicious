@@ -5,6 +5,8 @@ import domain.Admin;
 import domain.Customer;
 import domain.User;
 import domain.exception.CustomException;
+
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
     private static String url;
     private static String username;
     private static String password;
+    private Connection connection;
 
 
     /**
@@ -31,10 +34,26 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
     public UserRepository(String url, String user, String password) {
         UserRepository.url = url;
-        username = user;
+        UserRepository.username = user;
         UserRepository.password = password;
+        try {
+            connection = DriverManager.getConnection(url, user ,password);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    public Connection getConnection() {
+        try {
+            connection = DriverManager.getConnection(url, username ,password);
+            return connection;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /**
      * This method loads all the users from the database in the memory
      * @throws SQLException If there is the case, there will be thrown
@@ -44,7 +63,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         String sql = "select * from \"user\" ";
 
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
 
@@ -123,9 +142,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
                 + "phonenumber = " + createTemplate(userUpdated.getPhoneNumber())
                 + "isadmin = " +"'" + isAdmin + "'" + "where id = " + "'" + id_user + "';";
 
-        try (var connection = DriverManager.getConnection(url, username, password)
-
-        ) {
+        try {
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
 
@@ -183,9 +200,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         int new_id = super.elems.size() + 1;
 
-        try (var connection = DriverManager.getConnection(url, username, password)
-
-        ) {
+        try {
 
             sql = "insert into \"user\" "
                     + "VALUES(" + "'" + new_id + "'"  + ", "
@@ -202,6 +217,8 @@ public class UserRepository extends AbstractRepository<Long, User> {
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
 
+            user.setId((long) new_id);
+            super.add(user);
             return true;
         }
         catch(SQLException e) {
@@ -232,7 +249,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         String encryptedPassword = HashPassword.getEncryptedPassword(Password, salt);
 
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
 
@@ -277,8 +294,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
                     user.getUsername() + "'" + " AND "
                     + "password = " + "'" + user.getPassword() + "';";
 
-            try (var connection = DriverManager.getConnection(url, username, password)
-            ) {
+            try {
                 var ps = connection.prepareStatement(sql);
                 var rs = ps.executeUpdate();
                 //deleting from the memory repository
@@ -311,7 +327,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
                 "username =" + "'" + user.getUsername() + "'" +
                 "AND password=" + "'" + user.getPassword() + "'" + " ;";
 
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()
         ) {
@@ -341,8 +357,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
         String sql = "update \"user\" SET id = id - 1" +
                 "where id > " + id;
 
-        try (var connection = DriverManager.getConnection(url, username, password)
-        ) {
+        try {
 
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
@@ -424,7 +439,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         String customerSql = "select * from \"user\" where username=" + "'" + user_name + "'"
                 + " AND password=" + "'" + encryptedPassword + "'";
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (
              var ps = connection.prepareStatement(customerSql);
              var rs = ps.executeQuery()) {
 
@@ -478,7 +493,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
      */
     public  User getUserAfterUsername(String user_name) {
         String customerSql = "select * from \"user\" where username=" + "'" + user_name + "'";
-        try (var connection = DriverManager.getConnection(url, username, password);
+        try (
              var ps = connection.prepareStatement(customerSql);
              var rs = ps.executeQuery()) {
 

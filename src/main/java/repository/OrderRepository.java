@@ -4,10 +4,14 @@ import domain.Customer;
 import domain.Order;
 import domain.Product;
 import domain.exception.CustomException;
+
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static repository.ProductRepository.getProduct;
 import static repository.UserRepository.getCustomer;
@@ -18,9 +22,8 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
     private final String url;
     private final String user;
     private final String password;
-
+    private Connection connection;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
     /**
      * Database Credentials
@@ -28,14 +31,18 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
      * @param user ursername of the database
      * @param password password for the database
      */
-    public OrderRepository(String url, String user, String password) {
+    public OrderRepository(String url, String user, String password, ProductRepository prodRepo){
         this.url = url;
         this.user = user;
         this.password = password;
-        productRepository = new ProductRepository(url, user, password);
-        userRepository = new UserRepository(url, user, password);
-        productRepository.getAll();
-        userRepository.getAll();
+        productRepository = prodRepo;
+        try {
+          connection = DriverManager.getConnection(url, user, password);
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -47,7 +54,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
         super.elems.clear();
         String sql = "select * from \"order\"";
 
-        try (var connection = DriverManager.getConnection(url, user, password);
+        try (
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -58,7 +65,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
                 String sql2 = "Select * from \"order_product\" " +
                         "where order_id = " + id + ";";
 
-                try (var connection2 = DriverManager.getConnection(url, user, password);
+                try (
                      var ps2 = connection.prepareStatement(sql2);
                      var rs2 = ps2.executeQuery()) {
 
@@ -67,7 +74,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
                     while (rs2.next()) {
                         long product_id = rs2.getInt("product_id");
-                        Product product = getProduct(product_id);
+                        Product product = productRepository.findById(product_id);
 
                         if (product == null) {
                             System.err.println("product null");
@@ -113,13 +120,12 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
         int new_id = super.elems.size() + 1;
 
         //TODO: do this exception in GUI
-        if(orderExists(o.getId() ) ) {
-            throw new CustomException("Hey, you're adding an order which already exists");
-        }
+//        if(orderExists(o.getId() ) ) {
+//            throw new CustomException("Hey, you're adding an order which already exists");
+//        }
 
-        try (var connection = DriverManager.getConnection(url, user, password)
-
-        ) {
+        try
+        {
             sql = "insert into \"order\" "
                     + "VALUES(" + "'" + new_id + "'"  + ", "
                     + "'" + o.getCustomer().getId() + "'" + ", "
@@ -144,6 +150,8 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
                     var rs2 = ps2.executeUpdate();
                 }
 
+                o.setId((long)new_id);
+                super.add(o);
                 return true;
             }
         }
@@ -164,7 +172,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
         String sql = "Select * from \"order\" ";
 
-        try(var connection = DriverManager.getConnection(url, user, password);
+        try(
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeQuery()
         ) {
@@ -199,11 +207,9 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
         long id_deleted = o.getId();
         String sql2 ="";
-        try(var connection2 = DriverManager.getConnection(url, user, password)
-
-        ) {
+        try {
             sql2 = "Delete from \"order_product\" where order_id = " + id_deleted;
-            var ps2 = connection2.prepareStatement(sql2);
+            var ps2 = connection.prepareStatement(sql2);
             var rs2 = ps2.executeUpdate();
 
         } catch (SQLException e) {
@@ -234,9 +240,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
                 + "status = " + "'" + status + "'"
                 + "where id = " + "'" + orderID + "'" +  ";";
 
-        try (var connection = DriverManager.getConnection(url, user, password)
-
-        ) {
+        try {
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
 
@@ -280,9 +284,12 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 //                            var rs3 = ps3.executeUpdate();
 //
 //                        }
+            Order o  = super.findById(orderID);
+            o.setStatus(Order.Status.valueOf(status));
+            super.update(o);
             return true;
         }
-        catch(SQLException e) {
+        catch(SQLException | CustomException e) {
             e.printStackTrace();
         }
         return false;
@@ -291,7 +298,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
     public boolean productExistsInOrderProduct(long productId) {
         String sql = "Select * from \"order_product\" ";
 
-        try (var connection = DriverManager.getConnection(url, user, password);
+        try (
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
 
@@ -334,7 +341,9 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
         return new ArrayList<>(super.getAll());
     }
 
-
+    public Map<Long, Order> getHashMap() {
+        return elems;
+    }
 
 
 }
