@@ -253,7 +253,7 @@ public class AdminProfileController extends DatabaseCredentials implements Initi
                     o.getCustomer().getId(),
                     o.getStatus().toString()
             );
-            if(o.getStatus() == Order.Status.PENDING)
+            //if(o.getStatus() == Order.Status.PENDING)
                 orders.add(ord);
         }
 

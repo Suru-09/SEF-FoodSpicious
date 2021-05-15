@@ -182,7 +182,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
 
     public void initializeProductTable() {
         JFXTreeTableColumn<JFXProduct, String> productName = new JFXTreeTableColumn<>("Name");
-        productName.setPrefWidth(125);
+        productName.setPrefWidth(150);
         productName.setResizable(false);
         productName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
             @Override
@@ -192,7 +192,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
         });
 
         JFXTreeTableColumn<JFXProduct, String> productIngredients = new JFXTreeTableColumn<>("Ingredients");
-        productIngredients.setPrefWidth(125);
+        productIngredients.setPrefWidth(150);
         productIngredients.setResizable(false);
         productIngredients.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
             @Override
@@ -202,7 +202,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
         });
 
         JFXTreeTableColumn<JFXProduct, String> productExpirationDate = new JFXTreeTableColumn<>("Expiration Date");
-        productExpirationDate.setPrefWidth(125);
+        productExpirationDate.setPrefWidth(150);
         productExpirationDate.setResizable(false);
         productExpirationDate.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
             @Override
@@ -212,7 +212,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
         });
 
         JFXTreeTableColumn<JFXProduct, String> productPrice = new JFXTreeTableColumn<>("Price");
-        productPrice.setPrefWidth(125);
+        productPrice.setPrefWidth(140);
         productPrice.setResizable(false);
 
         productPrice.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<JFXProduct, String>, ObservableValue<String>>() {
@@ -222,43 +222,7 @@ public class CustomerProfileController extends DatabaseCredentials implements In
             }
         });
 
-        JFXTreeTableColumn <JFXProduct, String> selected = new JFXTreeTableColumn<>("Select");
-        Callback<TreeTableColumn<JFXProduct, String>, TreeTableCell<JFXProduct, String>> selectCell =
-                new Callback<TreeTableColumn<JFXProduct, String>, TreeTableCell<JFXProduct, String>>() {
-                    @Override
-                    public TreeTableCell<JFXProduct, String> call(TreeTableColumn<JFXProduct, String> param) {
-                        TreeTableCell<JFXProduct, String> cell = new TreeTableCell<JFXProduct, String>() {
-
-                            //final JFXCheckBox checkBox = new JFXCheckBox();
-                             CheckBox checkBox = new CheckBox();
-
-                            @Override
-                            public void updateItem(String item, boolean empty)
-                            {
-
-                                super.updateItem(item, empty);
-                                if (empty) {
-                                    setText(null);
-                                    setGraphic(null);
-                                }
-                                else {
-                                    checkBox.setText(item);
-                                    setGraphic(checkBox);
-                                }
-                            }
-
-                        };
-
-                        return cell;
-                    }
-                };
-
-        selected.setCellFactory(selectCell);
-        selected.setPrefWidth(110);
-        selected.setResizable(false);
-        selected.setEditable(true);
-
-        orderTable.getColumns().setAll(productName, productIngredients, productExpirationDate, productPrice, selected);
+        orderTable.getColumns().setAll(productName, productIngredients, productExpirationDate, productPrice);
 
     }
 
