@@ -11,7 +11,7 @@ public class Admin extends User {
     public boolean isAdmin() {
         return isAdmin;
     }
-
+    
     @Override
     public String toString() {
         return super.toString() + "Admin{" +

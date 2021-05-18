@@ -24,7 +24,7 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
     private static String url;
     private static String username;
     private static String password;
-    private Connection connection;
+
 
     /**
      * Database Credentials
@@ -36,13 +36,6 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
         ProductRepository.url = url;
         ProductRepository.username = username;
         ProductRepository.password = password;
-        try {
-            connection = DriverManager.getConnection(url, username, password);
-        }
-        catch(SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -56,6 +49,7 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
         String sql = "Select * from \"product\" ";
 
         try (
+             var connection = DriverManager.getConnection(url, username, password);
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
 
@@ -87,6 +81,7 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
         String sql = "Select * from \"product\" ";
 
         try (
+             var connection = DriverManager.getConnection(url, username, password);
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
 
@@ -130,7 +125,8 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
             return false;
         }
 
-        try {
+        try(var connection = DriverManager.getConnection(url, username, password);
+        ) {
             sql = "insert into \"product\" "
                     + "VALUES(" + "'" + new_id + "'"  + ", "
                     + createTemplate(name)
@@ -164,7 +160,7 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
         String sql = "Select * from \"product\" where " +
                 "name = " + "'" + p.getName() + "';";
 
-        try (
+        try (var connection = DriverManager.getConnection(url, username, password);
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()
         ) {
@@ -192,7 +188,7 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
         String sql = "update \"product\" SET id = id - 1" +
                 "where id > " + id;
 
-        try
+        try(var connection = DriverManager.getConnection(url, username, password);)
         {
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
@@ -224,7 +220,7 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
                     "where name = " + "'" +
                     p.getName() + "';";
 
-            try {
+            try(var connection = DriverManager.getConnection(url, username, password);) {
                 var ps = connection.prepareStatement(sql);
                 var rs = ps.executeUpdate();
 
@@ -258,7 +254,7 @@ public class ProductRepository extends AbstractRepository<Long, Product>{
                 + " expirationdate = " + "'" + pUpdated.getExpirationDate() + "'"
                 + "where name = " + "'" + pUpdated.getName() + "'" + ";";
 
-        try {
+        try(var connection = DriverManager.getConnection(url, username, password);) {
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
             super.update(pUpdated);

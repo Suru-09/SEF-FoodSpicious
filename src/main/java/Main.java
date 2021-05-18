@@ -1,11 +1,9 @@
 import controller.SceneManager;
-import domain.Admin;
-import domain.Order;
-import domain.Product;
-import domain.User;
+import domain.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import repository.OrderRepository;
+import repository.ProductRepository;
 import repository.UserRepository;
 
 import java.util.ArrayList;
@@ -25,11 +23,14 @@ public class Main extends Application {
         String password = "U85A51ME0gW4yVaPXdY--oJgSCm313Rn";
 
 
+
+
         //TODO: delete all testing things after finishing with them
 
         /* TESTING */
         SceneManager.setUp(stage);
         SceneManager.getInstance().switchScene(SceneManager.States.LOGIN);
+
 
     }
 

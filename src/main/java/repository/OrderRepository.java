@@ -22,7 +22,6 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
     private final String url;
     private final String user;
     private final String password;
-    private Connection connection;
     private final ProductRepository productRepository;
 
     /**
@@ -36,12 +35,6 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
         this.user = user;
         this.password = password;
         productRepository = prodRepo;
-        try {
-          connection = DriverManager.getConnection(url, user, password);
-        }
-        catch(SQLException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -54,7 +47,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
         super.elems.clear();
         String sql = "select * from \"order\"";
 
-        try (
+        try (var connection = DriverManager.getConnection(url, user, password);
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -124,7 +117,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 //            throw new CustomException("Hey, you're adding an order which already exists");
 //        }
 
-        try
+        try(var connection = DriverManager.getConnection(url, user, password);)
         {
             sql = "insert into \"order\" "
                     + "VALUES(" + "'" + new_id + "'"  + ", "
@@ -172,7 +165,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
         String sql = "Select * from \"order\" ";
 
-        try(
+        try(var connection = DriverManager.getConnection(url, user, password);
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeQuery()
         ) {
@@ -207,7 +200,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
 
         long id_deleted = o.getId();
         String sql2 ="";
-        try {
+        try (var connection = DriverManager.getConnection(url, user, password);){
             sql2 = "Delete from \"order_product\" where order_id = " + id_deleted;
             var ps2 = connection.prepareStatement(sql2);
             var rs2 = ps2.executeUpdate();
@@ -240,7 +233,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
                 + "status = " + "'" + status + "'"
                 + "where id = " + "'" + orderID + "'" +  ";";
 
-        try {
+        try(var connection = DriverManager.getConnection(url, user, password);) {
             var ps = connection.prepareStatement(sql);
             var rs = ps.executeUpdate();
 
@@ -298,7 +291,7 @@ public class OrderRepository extends AbstractRepository<Long, Order> {
     public boolean productExistsInOrderProduct(long productId) {
         String sql = "Select * from \"order_product\" ";
 
-        try (
+        try (var connection = DriverManager.getConnection(url, user, password);
              var ps = connection.prepareStatement(sql);
              var rs = ps.executeQuery()) {
 
