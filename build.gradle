@@ -11,12 +11,32 @@ repositories {
     mavenCentral()
 }
 
+mainClassName = 'JarMain'
+
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes 'Main-Class': 'JarMain'
+    }
+}
+
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
+
+    compile 'org.openjfx:javafx-base:15:win'
+    compile 'org.openjfx:javafx-graphics:15:win'
+    compile 'org.openjfx:javafx-controls:15:win'
+    compile 'org.openjfx:javafx-fxml:15:win'
+    compile 'org.postgresql:postgresql:42.2.19'
+    compile 'org.controlsfx:controlsfx:11.1.0'
+    compile group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
 }
+
 test {
     useJUnitPlatform()
 }
@@ -24,8 +44,6 @@ test {
 sourceCompatibility = 11
 
 javafx {
-    version = "15.0.1"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    version = "15"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.base' ]
 }
-
-mainClassName = 'Main'
