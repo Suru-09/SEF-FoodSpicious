@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static config.HashPassword.getEncryptedPassword;
+
 /**
  * NOTE: The UserRepository class, represents the interface of the application
  * with the database, everything you want to modify in the database related to
@@ -117,7 +119,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
         }
 
         String salt = user.getHashSalt();
-        String encryptedPassword = HashPassword.getEncryptedPassword(userUpdated.getPassword(), salt);
+        String encryptedPassword = getEncryptedPassword(userUpdated.getPassword(), salt);
 
         String sql = "update \"user\"  SET id = " + "'" + userUpdated.getId() + "', "
                 + "username = " + createTemplate(userUpdated.getUsername())
@@ -164,7 +166,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         //Securing the given password
         String salt = HashPassword.getNewSalt();
-        String encryptedPassword = HashPassword.getEncryptedPassword(Password, salt);
+        String encryptedPassword = getEncryptedPassword(Password, salt);
         user.setHashSalt(salt);
 
         System.out.println("SALT: " + salt);
@@ -235,7 +237,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
             return false;
         }
 
-        String encryptedPassword = HashPassword.getEncryptedPassword(Password, salt);
+        String encryptedPassword = getEncryptedPassword(Password, salt);
 
         try(var connection = DriverManager.getConnection(url, username, password);
 
@@ -273,15 +275,17 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
         //If user doesn't exist, we can't delete it
 
-        int idFromWhereToUpdate = findUserId(user);
-        if(idFromWhereToUpdate < 0)
-            return false;
+        int i = Math.toIntExact(user.getId());
 
         if( userExists(user.getUsername(), user.getPassword()) ) {
+
+            String salt = user.getHashSalt();
+            String encryptedPassword = getEncryptedPassword(user.getPassword(),salt);
+
             String sql = "delete from \"user\" " +
                          "where username = " + "'" +
                     user.getUsername() + "'" + " AND "
-                    + "password = " + "'" + user.getPassword() + "';";
+                    + "password = " + "'" + encryptedPassword + "';";
 
             try(var connection = DriverManager.getConnection(url, username, password);
             ){
@@ -290,9 +294,10 @@ public class UserRepository extends AbstractRepository<Long, User> {
                 //deleting from the memory repository
                 super.elems.remove(user.getId());
 
-                if( updateIndexes(idFromWhereToUpdate) ) {
+                if( updateIndexes(i) ) {
                     return true;
                 }
+                System.out.println("Trec de update");
             }
             catch(SQLException e) {
                 e.printStackTrace();
@@ -311,11 +316,20 @@ public class UserRepository extends AbstractRepository<Long, User> {
      * @return the id(int > 0) that is searched, -1 if the ID
      * doesn't exist
      */
-    public int findUserId(User user) {
+    public int findUserId(User user) throws Exception {
+
+        String salt = null;
+        if(user != null) {
+            salt = user.getHashSalt();
+        }else {
+            return -1;
+        }
+
+        String encryptedPassword = getEncryptedPassword(user.getPassword(), salt);
 
         String sql = "Select * from \"user\" where " +
                 "username =" + "'" + user.getUsername() + "'" +
-                "AND password=" + "'" + user.getPassword() + "'" + " ;";
+                "AND password=" + "'" + encryptedPassword + "'" + " ;";
 
         try (var connection = DriverManager.getConnection(url, username, password);
              var ps = connection.prepareStatement(sql);
@@ -426,7 +440,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
             salt = user.getHashSalt();
         }
 
-        String encryptedPassword = HashPassword.getEncryptedPassword(pass_word, salt);
+        String encryptedPassword = getEncryptedPassword(pass_word, salt);
 
         String customerSql = "select * from \"user\" where username=" + "'" + user_name + "'"
                 + " AND password=" + "'" + encryptedPassword + "'";
@@ -512,7 +526,7 @@ public class UserRepository extends AbstractRepository<Long, User> {
 
                     return admin;
                 }
-                else if(!isAdmin){
+                else {
                     Customer customer = new Customer(username
                             , password
                             , firstname
